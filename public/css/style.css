@@ -1,15 +1,196 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
-body, * {
-    font-family: 'Roboto', sans-serif;
+:root {
+    --accent: #ff7a59;
+    --accent-dark: #e8613f;
+    --text: #2d3e50;
+    --muted: #6b7c8f;
+    --border: #dfe3eb;
+    --row-alt: #f7f9fc;
+    --page-bg: #f0f3f7;
+    --card-bg: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-h1 {
-    margin: 1rem;
+body {
+    font-family: 'Roboto', sans-serif;
+    color: var(--text);
+    background-color: var(--page-bg);
+    line-height: 1.5;
+    padding: 3rem 1rem;
 }
 
+/* Centred white card that holds each page */
+.container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(45, 62, 80, 0.08);
+}
+
+.container--narrow {
+    max-width: 560px;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+/* Buttons (used for links and the submit button) */
+.button,
+input[type="submit"] {
+    display: inline-block;
+    padding: 0.6rem 1.25rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #ffffff;
+    background-color: var(--accent);
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.button:hover,
+input[type="submit"]:hover {
+    background-color: var(--accent-dark);
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--muted);
+    text-decoration: none;
+}
+
+.back-link::before {
+    content: "\2190  ";
+}
+
+.back-link:hover {
+    color: var(--text);
+    text-decoration: underline;
+}
+
+/* Table on the homepage */
+.table-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    font-weight: 500;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    background-color: var(--row-alt);
+}
+
+tbody tr:nth-child(even) {
+    background-color: var(--row-alt);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.actions {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.edit-link {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--accent-dark);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.edit-link:hover {
+    color: #ffffff;
+    background-color: var(--accent);
+}
+
+.empty {
+    text-align: center;
+    color: var(--muted);
+}
+
+/* Form on /update-cobj */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-top: 1rem;
+    margin-bottom: 0.35rem;
+    font-weight: 500;
+}
+
+input[type="text"],
+select {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--text);
+    background-color: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+input[type="text"]:focus,
+select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.2);
+}
+
+input[type="submit"] {
+    margin-top: 1.5rem;
+    align-self: flex-start;
+}
+
+/* Used by the sample contacts.pug (reference only) */
 .cards {
     display: flex;
     align-items: center;
@@ -24,35 +205,4 @@ h1 {
     border: solid 1px lightgrey;
     border-radius: 15px;
     box-shadow: 3px 2px 6px lightgrey;
-}
-
-.card__email {
-    font-size: 1rem;
-}
-
-.form-wrapper {
-    font-size: 18px;
-    max-width: 768px;
-    margin: 2rem auto;
-    padding: 2rem;
-    border: solid 1px lightgrey;
-    border-radius: 15px;
-    box-shadow: 3px 2px 6px lightgrey;
-}
-
-label, input {
-    margin-top: 5px;
-    display: block;
-    font-size: inherit;
-}
-
-input[type="text"] {
-    padding: .25rem;
-}
-
-input[type="submit"] {
-    background-color: lightgrey;
-    border: none;
-    padding: .375rem 1rem;
-    margin-top: 10px;
 }

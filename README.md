@@ -4,7 +4,9 @@ This repository is for the Integrating With HubSpot I: Foundations course. This 
 
 To read the full directions, please go to the [practicum instructions](https://app.hubspot.com/academy/l/tracks/1092124/1093824/5493?language=en).
 
-**Put your HubSpot developer test account custom objects URL link here:** https://app.hubspot.com/contacts/l/objects/${custom-obj-number}/views/all/list
+**Put your HubSpot developer test account custom objects URL link here:** https://app-eu1.hubspot.com/contacts/149823269/objects/2-256915071/views/all/list
+
+**Note on the access token:** creating private apps is no longer available in new HubSpot accounts (since October 2026), so I used a Service Key named "Isa's Practicum Private App" with the same scopes (`crm.schemas.custom`, `crm.objects.custom`, `crm.objects.contacts`, read and write). I also added `crm.objects.owners.read` so the form can offer an owner dropdown. It is a Bearer token just like a private app token and is kept in a local `.env` file that is not committed.
 
 ___
 ## Tips:
