@@ -1,0 +1,27 @@
+doctype html
+html(lang="en")
+    head
+        title= title
+        meta(name="viewport" content="width=device-width, initial-scale=1")
+        link(rel="stylesheet", href="/css/style.css")
+    body
+        a(href="/update-cobj") Add to this table
+        h1 Football Players
+
+        table
+            thead
+                tr
+                    th Name
+                    th Position
+                    th Club
+                    th Owner
+            tbody
+                each player in data
+                    tr
+                        td= player.properties.name
+                        td= player.properties.position
+                        td= player.properties.club
+                        td= ownerNames[player.properties.hubspot_owner_id] || ''
+                else
+                    tr
+                        td(colspan="4") No football players yet.

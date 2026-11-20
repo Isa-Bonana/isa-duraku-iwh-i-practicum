@@ -20,6 +20,36 @@ const PROPERTIES = ['name', 'position', 'club'];
 // TODO: ROUTE 1 - Create a new app.get route for the homepage to call your custom object data. Pass this data along to the front-end and create a new pug template in the views folder.
 
 // * Code for Route 1 goes here
+app.get('/', async (req, res) => {
+    // Custom properties are only returned when you ask for them in ?properties=
+    const getRecords = `${OBJECTS_BASE}/${OBJECT_TYPE_ID}?limit=100&properties=${PROPERTIES.join(',')},hubspot_owner_id`;
+    const getOwners = 'https://api.hubapi.com/crm/v3/owners?limit=100';
+    const headers = {
+        Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+        'Content-Type': 'application/json'
+    };
+
+    try {
+        const resp = await axios.get(getRecords, { headers });
+        const data = resp.data.results;
+
+        // Turn owner IDs into names for the table. If this fails, the table still shows without names.
+        let ownerNames = {};
+        try {
+            const ownersResp = await axios.get(getOwners, { headers });
+            ownersResp.data.results.forEach(owner => {
+                ownerNames[owner.id] = `${owner.firstName} ${owner.lastName}`;
+            });
+        } catch (error) {
+            console.error(error.response ? error.response.data : error.message);
+        }
+
+        res.render('homepage', { title: 'Football Players | Integrating With HubSpot I Practicum', data, ownerNames });
+    } catch (error) {
+        console.error(error.response ? error.response.data : error.message);
+        res.status(500).send('Could not load the records from HubSpot. Check the terminal for details.');
+    }
+});
 
 // TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
 
