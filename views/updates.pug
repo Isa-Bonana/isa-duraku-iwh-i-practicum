@@ -5,10 +5,10 @@ html(lang="en")
         meta(name="viewport" content="width=device-width, initial-scale=1")
         link(rel="stylesheet", href="/css/style.css")
     body
-        h1 Add a Football Player
-        a(href="/") Return to the homepage
+        main.container.container--narrow
+            a.back-link(href="/") Return to the homepage
+            h1 Add a Football Player
 
-        .form-wrapper
             //- The input names match the internal names of the custom object's properties in HubSpot.
             form(action="/update-cobj" method="POST")
                 label(for="name") Name
