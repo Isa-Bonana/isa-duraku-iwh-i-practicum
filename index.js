@@ -24,8 +24,24 @@ const PROPERTIES = ['name', 'position', 'club'];
 // TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
 
 // * Code for Route 2 goes here
-app.get('/update-cobj', (req, res) => {
-    res.render('updates', { title: 'Update Custom Object Form | Integrating With HubSpot I Practicum' });
+app.get('/update-cobj', async (req, res) => {
+    // Get the HubSpot users so the form can offer an owner dropdown (needs the crm.objects.owners.read scope).
+    const getOwners = 'https://api.hubapi.com/crm/v3/owners?limit=100';
+    const headers = {
+        Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+        'Content-Type': 'application/json'
+    };
+
+    let owners = [];
+    try {
+        const resp = await axios.get(getOwners, { headers });
+        owners = resp.data.results;
+    } catch (error) {
+        // Without owners the form still works, just without the dropdown.
+        console.error(error.response ? error.response.data : error.message);
+    }
+
+    res.render('updates', { title: 'Update Custom Object Form | Integrating With HubSpot I Practicum', owners });
 });
 
 // TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
@@ -40,6 +56,11 @@ app.post('/update-cobj', async (req, res) => {
             club: req.body.club
         }
     };
+
+    // Owner is optional: only send it when one was picked in the form.
+    if (req.body.hubspot_owner_id) {
+        newPlayer.properties.hubspot_owner_id = req.body.hubspot_owner_id;
+    }
 
     const createRecord = `${OBJECTS_BASE}/${OBJECT_TYPE_ID}`;
     const headers = {

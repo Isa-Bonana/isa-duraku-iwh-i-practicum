@@ -6,7 +6,7 @@ To read the full directions, please go to the [practicum instructions](https://a
 
 **Put your HubSpot developer test account custom objects URL link here:** https://app-eu1.hubspot.com/contacts/149823269/objects/2-256915071/views/all/list
 
-**Note on the access token:** creating private apps is no longer available in new HubSpot accounts (since October 2026), so I used a Service Key named "Isa's Practicum Private App" with the same scopes (`crm.schemas.custom`, `crm.objects.custom`, `crm.objects.contacts`, read and write). It is a Bearer token just like a private app token and is kept in a local `.env` file that is not committed.
+**Note on the access token:** creating private apps is no longer available in new HubSpot accounts (since October 2026), so I used a Service Key named "Isa's Practicum Private App" with the same scopes (`crm.schemas.custom`, `crm.objects.custom`, `crm.objects.contacts`, read and write). I also added `crm.objects.owners.read` so the form can offer an owner dropdown. It is a Bearer token just like a private app token and is kept in a local `.env` file that is not committed.
 
 ___
 ## Tips:

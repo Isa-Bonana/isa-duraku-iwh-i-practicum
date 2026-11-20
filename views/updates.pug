@@ -20,4 +20,11 @@ html(lang="en")
                 label(for="club") Club
                 input(type="text" id="club" name="club")
 
+                if owners && owners.length
+                    label(for="hubspot_owner_id") Owner
+                    select(id="hubspot_owner_id" name="hubspot_owner_id")
+                        option(value="") No owner
+                        each owner in owners
+                            option(value=owner.id) #{owner.firstName} #{owner.lastName}
+
                 input(type="submit" value="Add player")
