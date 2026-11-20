@@ -17,6 +17,9 @@ const OBJECTS_BASE = 'https://api.hubapi.com/crm/v3/objects';
 const OBJECT_TYPE_ID = '2-256915071';
 const PROPERTIES = ['name', 'position', 'club'];
 
+// HubSpot record ids are numbers. Checking this keeps anything else out of the API URL.
+const isRecordId = (id) => /^\d+$/.test(id);
+
 // TODO: ROUTE 1 - Create a new app.get route for the homepage to call your custom object data. Pass this data along to the front-end and create a new pug template in the views folder.
 
 // * Code for Route 1 goes here
@@ -71,7 +74,24 @@ app.get('/update-cobj', async (req, res) => {
         console.error(error.response ? error.response.data : error.message);
     }
 
-    res.render('updates', { title: 'Update Custom Object Form | Integrating With HubSpot I Practicum', owners });
+    // With ?id=<record id> the form edits an existing player, otherwise it adds a new one.
+    const id = req.query.id;
+    let player = null;
+    if (id) {
+        if (!isRecordId(id)) {
+            return res.status(400).send('Invalid record id.');
+        }
+        const getRecord = `${OBJECTS_BASE}/${OBJECT_TYPE_ID}/${id}?properties=${PROPERTIES.join(',')},hubspot_owner_id`;
+        try {
+            const resp = await axios.get(getRecord, { headers });
+            player = resp.data;
+        } catch (error) {
+            console.error(error.response ? error.response.data : error.message);
+            return res.status(404).send('Could not find this record in HubSpot. <a href="/">Return to the homepage</a>');
+        }
+    }
+
+    res.render('updates', { title: 'Update Custom Object Form | Integrating With HubSpot I Practicum', owners, player });
 });
 
 // TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
@@ -79,7 +99,7 @@ app.get('/update-cobj', async (req, res) => {
 // * Code for Route 3 goes here
 app.post('/update-cobj', async (req, res) => {
     // Only send the three properties of the form to HubSpot.
-    const newPlayer = {
+    const player = {
         properties: {
             name: req.body.name,
             position: req.body.position,
@@ -87,23 +107,34 @@ app.post('/update-cobj', async (req, res) => {
         }
     };
 
-    // Owner is optional: only send it when one was picked in the form.
-    if (req.body.hubspot_owner_id) {
-        newPlayer.properties.hubspot_owner_id = req.body.hubspot_owner_id;
+    const id = req.body.id;
+    if (id && !isRecordId(id)) {
+        return res.status(400).send('Invalid record id.');
     }
 
-    const createRecord = `${OBJECTS_BASE}/${OBJECT_TYPE_ID}`;
+    // Owner is optional. When adding, only send it if one was picked.
+    // When editing, always send it, so choosing "No owner" clears the owner in HubSpot.
+    if (req.body.hubspot_owner_id || id) {
+        player.properties.hubspot_owner_id = req.body.hubspot_owner_id || '';
+    }
+
     const headers = {
         Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
         'Content-Type': 'application/json'
     };
 
     try {
-        await axios.post(createRecord, newPlayer, { headers });
+        if (id) {
+            // Edit: update the existing record.
+            await axios.patch(`${OBJECTS_BASE}/${OBJECT_TYPE_ID}/${id}`, player, { headers });
+        } else {
+            // Add: create a new record.
+            await axios.post(`${OBJECTS_BASE}/${OBJECT_TYPE_ID}`, player, { headers });
+        }
         res.redirect('/');
     } catch (error) {
         console.error(error.response ? error.response.data : error.message);
-        res.status(500).send('Could not create the record in HubSpot. Check the terminal for details.');
+        res.status(500).send('Could not save the record in HubSpot. Check the terminal for details.');
     }
 });
 

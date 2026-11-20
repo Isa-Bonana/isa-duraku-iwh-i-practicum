@@ -5,26 +5,32 @@ html(lang="en")
         meta(name="viewport" content="width=device-width, initial-scale=1")
         link(rel="stylesheet", href="/css/style.css")
     body
+        //- When a player is passed in, the form edits that player; otherwise it adds a new one.
+        - const values = player ? player.properties : {}
+
         main.container.container--narrow
             a.back-link(href="/") Return to the homepage
-            h1 Add a Football Player
+            h1= player ? 'Edit Football Player' : 'Add a Football Player'
 
             //- The input names match the internal names of the custom object's properties in HubSpot.
             form(action="/update-cobj" method="POST")
+                if player
+                    input(type="hidden" name="id" value=player.id)
+
                 label(for="name") Name
-                input(type="text" id="name" name="name" required)
+                input(type="text" id="name" name="name" value=values.name required)
 
                 label(for="position") Position
-                input(type="text" id="position" name="position")
+                input(type="text" id="position" name="position" value=values.position)
 
                 label(for="club") Club
-                input(type="text" id="club" name="club")
+                input(type="text" id="club" name="club" value=values.club)
 
                 if owners && owners.length
                     label(for="hubspot_owner_id") Owner
                     select(id="hubspot_owner_id" name="hubspot_owner_id")
                         option(value="") No owner
                         each owner in owners
-                            option(value=owner.id) #{owner.firstName} #{owner.lastName}
+                            option(value=owner.id selected=(owner.id === values.hubspot_owner_id)) #{owner.firstName} #{owner.lastName}
 
-                input(type="submit" value="Add player")
+                input(type="submit" value=(player ? 'Save changes' : 'Add player'))

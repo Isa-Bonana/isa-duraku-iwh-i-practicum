@@ -18,6 +18,7 @@ html(lang="en")
                             th Position
                             th Club
                             th Owner
+                            th
                     tbody
                         each player in data
                             tr
@@ -25,6 +26,8 @@ html(lang="en")
                                 td= player.properties.position
                                 td= player.properties.club
                                 td= ownerNames[player.properties.hubspot_owner_id] || ''
+                                td.actions
+                                    a.edit-link(href=`/update-cobj?id=${player.id}`) Edit
                         else
                             tr
-                                td.empty(colspan="4") No football players yet.
+                                td.empty(colspan="5") No football players yet.
