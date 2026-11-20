@@ -12,6 +12,11 @@ app.use(express.json());
 // The token is read from the local .env file (ignored by git), so it never ends up in the repo.
 const PRIVATE_APP_ACCESS = process.env.PRIVATE_APP_ACCESS;
 
+// Custom object "Football players" in the developer test account.
+const OBJECTS_BASE = 'https://api.hubapi.com/crm/v3/objects';
+const OBJECT_TYPE_ID = '2-256915071';
+const PROPERTIES = ['name', 'position', 'club'];
+
 // TODO: ROUTE 1 - Create a new app.get route for the homepage to call your custom object data. Pass this data along to the front-end and create a new pug template in the views folder.
 
 // * Code for Route 1 goes here
@@ -26,6 +31,30 @@ app.get('/update-cobj', (req, res) => {
 // TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
 
 // * Code for Route 3 goes here
+app.post('/update-cobj', async (req, res) => {
+    // Only send the three properties of the form to HubSpot.
+    const newPlayer = {
+        properties: {
+            name: req.body.name,
+            position: req.body.position,
+            club: req.body.club
+        }
+    };
+
+    const createRecord = `${OBJECTS_BASE}/${OBJECT_TYPE_ID}`;
+    const headers = {
+        Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+        'Content-Type': 'application/json'
+    };
+
+    try {
+        await axios.post(createRecord, newPlayer, { headers });
+        res.redirect('/');
+    } catch (error) {
+        console.error(error.response ? error.response.data : error.message);
+        res.status(500).send('Could not create the record in HubSpot. Check the terminal for details.');
+    }
+});
 
 /** 
 * * This is sample code to give you a reference for how you should structure your calls. 
